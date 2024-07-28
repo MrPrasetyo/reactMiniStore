@@ -1,40 +1,131 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Avatar, Typography } from "@material-tailwind/react";
-import profilImage from "../assets/profil.jpg";
+import { Navbar, Collapse, Typography, IconButton, List, ListItem, Menu, MenuHandler, MenuList, MenuItem, Avatar } from "@material-tailwind/react";
+import { ChevronDownIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Bars4Icon, GlobeAmericasIcon, NewspaperIcon, ShoppingBagIcon, PhoneIcon, ShoppingCartIcon, HomeIcon, RectangleGroupIcon, SquaresPlusIcon, SunIcon, TagIcon, UserGroupIcon } from "@heroicons/react/24/solid";
+import profileLogo from "../assets/profil.jpg";
 
-const Navbar = () => {
-  const activeClass = ({ isActive }) => (isActive ? "" : "");
-  return (
-    <>
-      <nav className="bg-gradient-to-br from-cyan-600 to-blue-600">
-        <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-          <div className="h-20 flex items-center justify-between">
-            <div className="flex items-center">
-              <NavLink to="/">
-                <Avatar src={profilImage} alt="logo" />
-              </NavLink>
-            </div>
-            <div>
-              <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
-                <Typography as="li" variant="small" color="blue-gray" className="flex items-center gap-x-2 p-1 font-medium">
-                  <NavLink to="/" className="flex items-center">
-                    Home
-                  </NavLink>
-                </Typography>
-                <Typography as="li" variant="small" color="blue-gray" className="flex items-center gap-x-2 p-1 font-medium">
-                  <NavLink to="/store" className="flex items-center">
-                    Store
-                  </NavLink>
-                </Typography>
-              </ul>
-            </div>
-            <div></div>
-          </div>
+const navListMenuItems = [
+  {
+    title: "Categories",
+    description: "Find Your Categories choices here",
+    icon: SquaresPlusIcon,
+    link: "categories",
+  },
+  {
+    title: "Store",
+    description: "Going to Shop? click here",
+    icon: ShoppingCartIcon,
+    link: "store",
+  },
+  {
+    title: "Add Product",
+    description: "Find Your Products here",
+    icon: PhoneIcon,
+    link: "add-product",
+  },
+  {
+    title: "Products",
+    description: "Find Your Products here",
+    icon: ShoppingBagIcon,
+    link: "products",
+  },
+];
+
+function NavListMenu() {
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const renderItems = navListMenuItems.map(({ icon, title, description, link }, key) => (
+    <NavLink to={`/${link.toLowerCase()}`} key={key}>
+      <MenuItem className="flex items-center gap-3 rounded-lg hover:bg-blue-300">
+        <div className="flex items-center justify-center rounded-lg !bg-blue-gray-50 p-2 ">
+          {" "}
+          {React.createElement(icon, {
+            strokeWidth: 2,
+            className: "h-6 text-gray-900 w-6",
+          })}
         </div>
-      </nav>
-    </>
-  );
-};
+        <div>
+          <Typography variant="h6" color="blue-gray" className="flex items-center text-sm font-bold">
+            {title}
+          </Typography>
+          <Typography variant="paragraph" className="text-xs !font-medium text-blue-gray-500">
+            {description}
+          </Typography>
+        </div>
+      </MenuItem>
+    </NavLink>
+  ));
 
-export default Navbar;
+  return (
+    <React.Fragment>
+      <Menu open={isMenuOpen} handler={setIsMenuOpen} offset={{ mainAxis: 20 }} placement="bottom" allowHover={true}>
+        <MenuHandler>
+          <Typography as="div" variant="small" className="font-medium">
+            <ListItem className="flex items-center gap-2 py-2 pr-4 font-medium text-gray-900" selected={isMenuOpen || isMobileMenuOpen} onClick={() => setIsMobileMenuOpen((cur) => !cur)}>
+              <ShoppingBagIcon className="w-3 h-3" />
+              Store
+              <ChevronDownIcon strokeWidth={2.5} className={`hidden h-3 w-3 transition-transform lg:block ${isMenuOpen ? "rotate-180" : ""}`} />
+              <ChevronDownIcon strokeWidth={2.5} className={`block h-3 w-3 transition-transform lg:hidden ${isMobileMenuOpen ? "rotate-180" : ""}`} />
+            </ListItem>
+          </Typography>
+        </MenuHandler>
+        <MenuList className="hidden max-w-screen-xl rounded-xl lg:block">
+          <ul className="grid grid-cols-2 gap-y-2 outline-none outline-0">{renderItems}</ul>
+        </MenuList>
+      </Menu>
+      <div className="block lg:hidden">
+        <Collapse open={isMobileMenuOpen}>{renderItems}</Collapse>
+      </div>
+    </React.Fragment>
+  );
+}
+
+function NavList() {
+  return (
+    <List className="mt-4 mb-6 p-0 lg:mt-0 lg:mb-0 lg:flex-row lg:p-1">
+      <Typography as={NavLink} to="/" variant="small" color="blue-gray" className="font-medium">
+        <ListItem className="flex items-center gap-2 py-2 pr-4">
+          <HomeIcon className="h-3 w-3" />
+          Home
+        </ListItem>
+      </Typography>
+      <NavListMenu />
+      <Typography as={NavLink} to="/about" variant="small" color="blue-gray" className="font-medium">
+        <ListItem className="flex items-center gap-2 py-2 pr-4">
+          <PhoneIcon className="h-3 w-3" />
+          About
+        </ListItem>
+      </Typography>
+    </List>
+  );
+}
+
+export function MegaMenuWithHover() {
+  const [openNav, setOpenNav] = React.useState(false);
+
+  React.useEffect(() => {
+    window.addEventListener("resize", () => window.innerWidth >= 960 && setOpenNav(false));
+  }, []);
+
+  return (
+    <Navbar className="mx-auto max-w-screen-xl px-4 py-2">
+      <div className="flex items-center justify-between text-blue-gray-900">
+        <NavLink to="/">
+          <Avatar src={profileLogo} />
+        </NavLink>
+        <div className="hidden lg:block">
+          <NavList />
+        </div>
+        <IconButton variant="text" color="blue-gray" className="lg:hidden" onClick={() => setOpenNav(!openNav)}>
+          {openNav ? <XMarkIcon className="h-6 w-6" strokeWidth={2} /> : <Bars3Icon className="h-6 w-6" strokeWidth={2} />}
+        </IconButton>
+      </div>
+      <Collapse open={openNav}>
+        <NavList />
+      </Collapse>
+    </Navbar>
+  );
+}
+
+export default MegaMenuWithHover;
