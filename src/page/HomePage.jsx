@@ -16,8 +16,14 @@ const HomePage = () => {
   return (
     <>
       <header className="bg-white">
-        <div className="h-[100dvh] max-w-7xl mx-auto">
-
+        <div className="Hero-Box max-w-7xl mx-auto">
+          <div className="Hero-Container py-10">
+            <div className="flex flex-col justify-center">
+              <Typography variant="h1" className="">
+                E-Commerce Site
+              </Typography>
+            </div>
+          </div>
         </div>
       </header>
 
