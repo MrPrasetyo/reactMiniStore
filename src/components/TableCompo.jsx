@@ -37,7 +37,7 @@ export function TableCompo() {
 
   return (
     <Card className="h-full w-full overflow-x-scroll">
-      <table className="w-full min-w-max table-auto text-left">
+      <table className="w-full min-w-max table-auto text-left relative">
         <thead>
           <tr>
             {TABLE_HEAD.map((head) => (
@@ -51,7 +51,8 @@ export function TableCompo() {
         </thead>
         <tbody>
         {loading ? (
-            <Spinner loading={loading} />
+          <div className="flex xl:ml-[25dvw] lg:ml-[37dvw] md:ml-[40dvw] ml-[30dvw]">
+            <Spinner loading={loading} /></div>
           ) : (
             currentItems.map((product, index) => {
               const isLast = index === currentItems.length - 1;

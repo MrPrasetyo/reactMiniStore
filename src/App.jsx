@@ -3,10 +3,13 @@ import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } 
 import HomePage from "./page/HomePage";
 import AboutPage from "./page/AboutPage";
 import StorePage from "./page/StorePage";
+import CategoryPage from "./page/CategoryPage";
 import AddProductPage from "./page/AddProductPage";
+import EditProductPage from "./page/EditProductPage";
 import MainLayouts from "./Layouts/MainLayouts";
 import NotFoundPage from "./page/NotFoundPage";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const App = () => {
   // Add
@@ -14,8 +17,10 @@ const App = () => {
     try {
       const res = await axios.post("https://fakestoreapi.com/products", newProduct);
       console.log("Product Added Succesfully", res.data);
+      toast.success("Product Added Succesfully")
     } catch (error) {
       console.error("Failed to Add Product", error);
+      toast.error("Failed to add Product")
     }
   };
   // Edit
@@ -26,8 +31,10 @@ const App = () => {
       <Route path="/" element={<MainLayouts />}>
         <Route index element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/category" element={<CategoryPage />} />
         <Route path="/store" element={<StorePage />} />
         <Route path="/add-product" element={<AddProductPage addProductSubmit={addProduct}/>} />
+        <Route path="/edit-product" element={<EditProductPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     )
