@@ -4,6 +4,7 @@ import HomePage from "./page/HomePage";
 import AboutPage from "./page/AboutPage";
 import StorePage from "./page/StorePage";
 import CategoryPage from "./page/CategoryPage";
+import CategoryList from "./page/CategoryList";
 import AddProductPage from "./page/AddProductPage";
 import EditProductPage from "./page/EditProductPage";
 import MainLayouts from "./Layouts/MainLayouts";
@@ -12,28 +13,26 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const App = () => {
-  // Add
   const addProduct = async (newProduct) => {
     try {
       const res = await axios.post("https://fakestoreapi.com/products", newProduct);
-      console.log("Product Added Succesfully", res.data);
-      toast.success("Product Added Succesfully")
+      console.log("Product Added Successfully", res.data);
+      toast.success("Product Added Successfully");
     } catch (error) {
       console.error("Failed to Add Product", error);
-      toast.error("Failed to add Product")
+      toast.error("Failed to Add Product");
     }
   };
-  // Edit
 
-  // Delete
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<MainLayouts />}>
         <Route index element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/category" element={<CategoryPage />} />
+        <Route path="/category/:categoryName" element={<CategoryList />} />
         <Route path="/store" element={<StorePage />} />
-        <Route path="/add-product" element={<AddProductPage addProductSubmit={addProduct}/>} />
+        <Route path="/add-product" element={<AddProductPage addProductSubmit={addProduct} />} />
         <Route path="/edit-product" element={<EditProductPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
