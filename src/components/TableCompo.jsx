@@ -2,21 +2,26 @@ import { MagnifyingGlassIcon, ChevronUpDownIcon } from "@heroicons/react/24/outl
 import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import { Card, CardHeader, Input, Typography, Button, CardBody, Chip, CardFooter, Tabs, TabsHeader, Tab, Avatar, IconButton, Tooltip } from "@material-tailwind/react";
 import Spinner from "./Spinner";
+import SkeletonTable from "./SkeletonTable";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const TABLE_HEAD = ["Photo", "Name Products", "Price", "Actions"];
-const ITEMS_PER_PAGE = 8;
+const TABLE_HEAD = ["Photo", "Name Products", "Category", "Price", "Actions"];
+const ITEMS_PER_PAGE = 6;
 
 export function TableCompo() {
   const [store, setStore] = useState([]);
+  const [filteredStore, setFilteredStore] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+
   useEffect(() => {
     const fetchStore = async () => {
       try {
-        const res = await axios.get("https://fakestoreapi.com/products");
-        setStore(res.data);
+        const res = await axios.get('https://dummyjson.com/products');
+        setStore(res.data.products);
+        setFilteredStore(res.data.products);
       } catch (error) {
         console.error("Error Fetching Data", error);
       } finally {
@@ -26,17 +31,35 @@ export function TableCompo() {
     fetchStore();
   }, []);
 
+  const handleSearch = (e) => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+    const filtered = store.filter((product) => 
+      product.title.toLowerCase().includes(term)
+    );
+    setFilteredStore(filtered);
+    setCurrentPage(1);
+  };
+
   const handlePageChange = (page) => {
-    setCurrentPage(page);
+    setCurrentPage(page); 
   };
 
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
   const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
-  const currentItems = store.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(store.length / ITEMS_PER_PAGE);
+  const currentItems = filteredStore.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredStore.length / ITEMS_PER_PAGE);
 
   return (
     <Card className="h-full w-full overflow-x-scroll">
+      <div className="p-4 flex justify-between items-center w-1/4">
+        <Input
+          label="Search Products"
+          value={searchTerm}
+          onChange={handleSearch}
+          icon={<MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />}
+        />
+      </div>
       <table className="w-full min-w-max table-auto text-left relative">
         <thead>
           <tr>
@@ -51,8 +74,7 @@ export function TableCompo() {
         </thead>
         <tbody>
         {loading ? (
-          <div className="flex xl:ml-[25dvw] lg:ml-[37dvw] md:ml-[40dvw] ml-[30dvw]">
-            <Spinner loading={loading} /></div>
+          <SkeletonTable />
           ) : (
             currentItems.map((product, index) => {
               const isLast = index === currentItems.length - 1;
@@ -61,12 +83,17 @@ export function TableCompo() {
                 <tr key={product.id}>
                   <td className={classes}>
                     <div className="flex items-center gap-3">
-                      <Avatar src={product.image} alt={product.title} size="md" className="border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1" />
+                      <Avatar src={product.thumbnail} alt={product.title} size="md" className="border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1" />
                     </div>
                   </td>
                   <td className={classes}>
                     <Typography variant="small" color="blue-gray" className="font-normal">
                       {product.title}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Typography variant="small" color="blue-gray" className="font-normal">
+                      {product.category}
                     </Typography>
                   </td>
                   <td className={classes}>

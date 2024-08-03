@@ -4,6 +4,11 @@ import { Typography, Card, Input, Textarea, Button } from "@material-tailwind/re
 import CurrencyInput from "react-currency-input-field";
 import axios from "axios";
 import Autocomplete from "@mui/joy/Autocomplete";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const AddProductPage = ({ addProductSubmit }) => {
   // Form
@@ -13,35 +18,51 @@ const AddProductPage = ({ addProductSubmit }) => {
 
   useEffect(() => {
     axios
-      .get("https://fakestoreapi.com/products")
+      .get("https://dummyjson.com/products")
       .then((response) => {
-        const uniqueCategories = [...new Set(response.data.map((product) => product.category))];
+        const uniqueCategories = [...new Set(response.data.products.map((product) => product.category))];
         setCategories(uniqueCategories);
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
-  // Submit
+  // Form Data
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState("https://i.pravatar.cc");
+  const [images, setImages] = useState("https://i.pravatar.cc");
   const [category, setCategory] = useState("");
+  const [stock, setStock] = useState("");
+  const [brand, setBrand] = useState("");
+  const [warrantyInformation, setWarrantyInformation] = useState("");
+  const [shippingInformation, setShippingInformation] = useState("");
 
   const navigate = useNavigate();
 
-  const submitForm = (e) => {
-    e.preventDefault();
-
+  const submitForm = () => {
     const newProduct = {
       title,
       price,
       description,
-      image,
+      images,
       category,
     };
     addProductSubmit(newProduct);
     return navigate("/");
+  };
+
+  // Confirmation Dialog
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (confirm) => {
+    setOpen(false);
+    if (confirm) {
+      submitForm();
+    }
   };
 
   return (
@@ -55,7 +76,7 @@ const AddProductPage = ({ addProductSubmit }) => {
             <Typography color="gray" className="mt-1 font-normal">
               Nice to meet you! Enter your details to register.
             </Typography>
-            <form onSubmit={submitForm} className="max-w-screen mt-8 mb-2">
+            <form id="productForm" className="max-w-screen mt-8 mb-2">
               <div className="mb-1 flex flex-col gap-6">
                 <Typography variant="h6" color="blue-gray" className="-mb-3">
                   Products Name
@@ -118,7 +139,7 @@ const AddProductPage = ({ addProductSubmit }) => {
                   sx={{ width: 300 }}
                   renderInput={(params) => <Input {...params} size="lg" />}
                 />
-                <Button id="submitBtn" name="submitBtn" type="submit" className="mt-6 w-fit mx-auto">
+                <Button id="submitBtn" name="submitBtn" type="button" className="mt-6 w-fit mx-auto" onClick={handleClickOpen}>
                   Add Product
                 </Button>
               </div>
@@ -126,6 +147,20 @@ const AddProductPage = ({ addProductSubmit }) => {
           </Card>
         </div>
       </div>
+      <Dialog open={open} onClose={() => handleClose(false)}>
+        <DialogTitle>Confirmation</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Are you sure the data entered is correct?</DialogContentText>
+        </DialogContent>
+        <DialogActions className="flex items-center justify-center">
+          <Button onClick={() => handleClose(false)} color="white" className="ring-1 ring-black px-3 py-2">
+            Cancel
+          </Button>
+          <Button onClick={() => handleClose(true)} color="primary" className="px-3 py-2">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
