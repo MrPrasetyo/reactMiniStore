@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
 import { Button, Typography } from "@material-tailwind/react";
@@ -10,12 +10,15 @@ import { FaTruckFast } from "react-icons/fa6";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
 const ProductPage = () => {
-  const { id } = useParams(); // Ambil id dari parameter URL
+  const { id } = useParams();
+  const location = useLocation();
   const [product, setProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(true);
 
-  // Fallback data jika product.images tidak tersedia
+  const queryParams = new URLSearchParams(location.search);
+  const categoryName = queryParams.get("category");
+
   const fallbackData = [
     "https://images.unsplash.com/photo-1499696010180-025ef6e1a8f9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
     "https://images.unsplash.com/photo-1432462770865-65b70566d673?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
@@ -34,7 +37,6 @@ const ProductPage = () => {
         const productData = res.data;
         setProduct(productData);
 
-        // Update gambar dan aktifkan gambar pertama jika tersedia
         const productImages = productData.images && productData.images.length > 0
           ? productData.images
           : fallbackData;
@@ -42,13 +44,13 @@ const ProductPage = () => {
         setImages(productImages);
         setActive(productImages[0]);
       } catch (error) {
-        console.error("error fetching data", error);
+        console.error("Error fetching data", error);
       } finally {
         setIsLoading(false);
       }
     };
     fetchProduct();
-  }, [id]); // Memasukkan id sebagai dependency useEffect
+  }, [id]);
 
   const renderStars = (rating) => {
     const stars = [];
@@ -67,8 +69,8 @@ const ProductPage = () => {
   return (
     <section className="bg-white">
       <div className="xl:max-w-7xl md:max-w-5xl mx-auto flex flex-col lg:px-5">
-        <Link to="/category">
-          <Typography className="flex items-center mt-4">
+        <Link to={`/category/${categoryName}`} className="flex items-center mt-4">
+          <Typography className="flex items-center">
             <IoArrowBack className="w-4 h-4 mr-2" /> Back to Category
           </Typography>
         </Link>
