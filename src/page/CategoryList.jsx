@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardBody, Typography, Button } from "@material-tailwind/react";
 import Spinner from "../components/Spinner";
+import SkeletonCategory from "../components/SkeletonCategory";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useParams } from "react-router-dom";
@@ -27,20 +28,19 @@ const CategoryList = () => {
 
   return (
     <div className="container mx-auto p-4">
+      <Typography variant="h3" color="blue-gray" className="mb-4">
+        {categoryName}
+      </Typography>
+      <Link to="/category">
+        <Typography className="mb-2 flex items-center">
+          <IoArrowBack className="w-4 h-4 mr-2" /> Back to Category
+        </Typography>
+      </Link>
       {isLoading ? (
-        <div className="flex justify-center items-center h-screen">
-          <Spinner />
-        </div>
+        <div className="grid grid-cols-4"><SkeletonCategory /></div>
+        
       ) : (
         <>
-          <Typography variant="h3" color="blue-gray" className="mb-4">
-            {categoryName}
-          </Typography>
-          <Link to="/category">
-            <Typography className="mb-2 flex items-center">
-              <IoArrowBack className="w-4 h-4 mr-2" /> Back to Category
-            </Typography>
-          </Link>
           {itemKategori.length === 0 ? (
             <Typography variant="h6" color="red" className="text-center mt-6">
               Tidak ditemukan produk di kategori ini.

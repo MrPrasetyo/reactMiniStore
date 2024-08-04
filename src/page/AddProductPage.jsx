@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Typography, Card, Button } from "@material-tailwind/react";
 import Input from "@mui/material/Input";
-import Textarea from '@mui/joy/Textarea';
+import Textarea from "@mui/joy/Textarea";
 import CurrencyInput from "react-currency-input-field";
 import axios from "axios";
 import Autocomplete from "@mui/joy/Autocomplete";
+import { GoPlus } from "react-icons/go";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -16,14 +17,13 @@ const AddProductPage = ({ addProductSubmit }) => {
   const [categories, setCategories] = useState([]);
   const [value, setValue] = useState(null);
   const [inputValue, setInputValue] = useState("");
+  const [selectedImageUrls, setSelectedImageUrls] = useState([]);
 
   useEffect(() => {
     axios
       .get("https://dummyjson.com/products")
       .then((response) => {
-        const uniqueCategories = [
-          ...new Set(response.data.products.map((product) => product.category)),
-        ];
+        const uniqueCategories = [...new Set(response.data.products.map((product) => product.category))];
         setCategories(uniqueCategories);
       })
       .catch((error) => console.error("Error fetching data:", error));
@@ -33,7 +33,7 @@ const AddProductPage = ({ addProductSubmit }) => {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
-  const [images, setImages] = useState("https://i.pravatar.cc");
+  const [images, setImages] = useState([]);
   const [category, setCategory] = useState("");
   const [stock, setStock] = useState("");
   const [brand, setBrand] = useState("");
@@ -64,6 +64,13 @@ const AddProductPage = ({ addProductSubmit }) => {
   const handlePriceChange = (value) => {
     setPrice(value);
     validateField("price", value);
+  };
+
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files);
+    const imageUrls = files.map((file) => URL.createObjectURL(file));
+    setSelectedImageUrls((prevUrls) => [...prevUrls, ...imageUrls]);
+    setImages((prevImages) => [...prevImages, ...files]);
   };
 
   const validateForm = () => {
@@ -110,6 +117,10 @@ const AddProductPage = ({ addProductSubmit }) => {
     }
   };
 
+  function openFileUpload() {
+    document.getElementById("hiddenFile").click();
+  }
+
   return (
     <>
       <div className="max-w-6xl mx-auto">
@@ -134,9 +145,7 @@ const AddProductPage = ({ addProductSubmit }) => {
                   name="prdTitle"
                   value={title}
                   onChange={handleInputChange(setTitle, "title")}
-                  className={`!border-t-blue-gray-200 focus:!border-t-gray-900 ${
-                    errors.title ? "" : ""
-                  }`}
+                  className={`!border-t-blue-gray-200 focus:!border-t-gray-900 ${errors.title ? "" : ""}`}
                 />
                 {errors.title && (
                   <Typography variant="small" color="red" className="-mb-3 -mt-5">
@@ -155,9 +164,7 @@ const AddProductPage = ({ addProductSubmit }) => {
                   onChange={handleInputChange(setDescription, "description")}
                   placeholder="Input Your Description Here"
                   error={!!errors.description}
-                  className={`!border-t-blue-gray-200 focus:!border-t-gray-900 ring-1 ring-transparent ${
-                    errors.description ? "!border-t-red-500" : ""
-                  }`}
+                  className={`!border-t-blue-gray-200 focus:!border-t-gray-900 ring-1 ring-transparent ${errors.description ? "!border-t-red-500" : ""}`}
                 />
                 {errors.description && (
                   <Typography variant="small" color="red" className="-mb-3 -mt-5">
@@ -175,9 +182,7 @@ const AddProductPage = ({ addProductSubmit }) => {
                   prefix="Rp "
                   placeholder="Enter the Price"
                   decimalsLimit={2}
-                  className={`border-[1px] rounded-md border-blue-gray-200 p-2 text-gray-600 text-sm w-fit ${
-                    errors.price ? "border-red-500" : ""
-                  }`}
+                  className={`border-[1px] rounded-md border-blue-gray-200 p-2 text-gray-600 text-sm w-fit ${errors.price ? "border-red-500" : ""}`}
                 />
                 {errors.price && (
                   <Typography variant="small" color="red" className="-mb-3 -mt-5">
@@ -202,27 +207,27 @@ const AddProductPage = ({ addProductSubmit }) => {
                   }}
                   options={categories}
                   sx={{ width: 300 }}
-                  renderInput={(params) => (
-                    <Input
-                      {...params}
-                      size="lg"
-                      className={`${errors.category ? "border-red-500" : ""}`}
-                    />
-                  )}
+                  renderInput={(params) => <Input {...params} size="lg" className={`${errors.category ? "border-red-500" : ""}`} />}
                 />
                 {errors.category && (
                   <Typography variant="small" color="red" className="-mb-3 -mt-5">
                     {errors.category}
                   </Typography>
                 )}
+                <Button onClick={openFileUpload} className="flex flex-col p-2" variant="outlined">
+                  <span className="-mb-5 w-full text-lg">Upload Photos Here</span>
+                  <Input onChange={handleFileChange} type="file" id="hiddenFile" className="opacity-0 hidden" multiple />
+                  <div className="flex w-full h-24 bg-blue-gray-50 border-2 border-dashed border-black items-center justify-center">
+                    <GoPlus size={50} />
+                  </div>
+                </Button>
+                <div className="grid grid-cols-3 gap-4 mt-4">
+                  {selectedImageUrls.map((url, index) => (
+                    <img key={index} src={url} alt={`Selected ${index}`} className="h-full w-full object-cover" />
+                  ))}
+                </div>
 
-                <Button
-                  id="submitBtn"
-                  name="submitBtn"
-                  type="button"
-                  className="mt-6 w-fit mx-auto"
-                  onClick={handleClickOpen}
-                >
+                <Button id="submitBtn" name="submitBtn" type="button" className="mt-6 w-fit mx-auto" onClick={handleClickOpen}>
                   Add Product
                 </Button>
               </div>
@@ -233,23 +238,13 @@ const AddProductPage = ({ addProductSubmit }) => {
       <Dialog open={open} onClose={() => handleClose(false)}>
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Are you sure the data entered is correct?
-          </DialogContentText>
+          <DialogContentText>Are you sure the data entered is correct?</DialogContentText>
         </DialogContent>
         <DialogActions className="flex items-center justify-center">
-          <Button
-            onClick={() => handleClose(false)}
-            color="white"
-            className="ring-1 ring-black px-3 py-2"
-          >
+          <Button onClick={() => handleClose(false)} color="white" className="ring-1 ring-black px-3 py-2">
             Cancel
           </Button>
-          <Button
-            onClick={() => handleClose(true)}
-            color="black"
-            className="px-3 py-2"
-          >
+          <Button onClick={() => handleClose(true)} color="black" className="px-3 py-2">
             Confirm
           </Button>
         </DialogActions>
