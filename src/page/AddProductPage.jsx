@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Typography, Card, Input, Textarea, Button } from "@material-tailwind/react";
+import { Typography, Card, Button } from "@material-tailwind/react";
+import Input from "@mui/material/Input";
+import Textarea from '@mui/joy/Textarea';
 import CurrencyInput from "react-currency-input-field";
 import axios from "axios";
 import Autocomplete from "@mui/joy/Autocomplete";
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 const AddProductPage = ({ addProductSubmit }) => {
-  // Form
   const [categories, setCategories] = useState([]);
   const [value, setValue] = useState(null);
   const [inputValue, setInputValue] = useState("");
@@ -20,7 +21,9 @@ const AddProductPage = ({ addProductSubmit }) => {
     axios
       .get("https://dummyjson.com/products")
       .then((response) => {
-        const uniqueCategories = [...new Set(response.data.products.map((product) => product.category))];
+        const uniqueCategories = [
+          ...new Set(response.data.products.map((product) => product.category)),
+        ];
         setCategories(uniqueCategories);
       })
       .catch((error) => console.error("Error fetching data:", error));
@@ -37,15 +40,55 @@ const AddProductPage = ({ addProductSubmit }) => {
   const [warrantyInformation, setWarrantyInformation] = useState("");
   const [shippingInformation, setShippingInformation] = useState("");
 
+  const [errors, setErrors] = useState({});
+
   const navigate = useNavigate();
 
+  const validateField = (name, value) => {
+    setErrors((prevErrors) => {
+      if (!value) {
+        return { ...prevErrors, [name]: "Field ini harus diisi" };
+      } else {
+        const { [name]: removedError, ...rest } = prevErrors;
+        return rest;
+      }
+    });
+  };
+
+  const handleInputChange = (setter, name) => (e) => {
+    const { value } = e.target;
+    setter(value);
+    validateField(name, value);
+  };
+
+  const handlePriceChange = (value) => {
+    setPrice(value);
+    validateField("price", value);
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!title) newErrors.title = "Field ini harus diisi";
+    if (!price) newErrors.price = "Field ini harus diisi";
+    if (!description) newErrors.description = "Field ini harus diisi";
+    if (!category) newErrors.category = "Field ini harus diisi";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const submitForm = () => {
+    if (!validateForm()) return;
+
     const newProduct = {
       title,
       price,
       description,
       images,
       category,
+      stock,
+      brand,
+      warrantyInformation,
+      shippingInformation,
     };
     addProductSubmit(newProduct);
     return navigate("/");
@@ -55,7 +98,9 @@ const AddProductPage = ({ addProductSubmit }) => {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
-    setOpen(true);
+    if (validateForm()) {
+      setOpen(true);
+    }
   };
 
   const handleClose = (confirm) => {
@@ -83,16 +128,21 @@ const AddProductPage = ({ addProductSubmit }) => {
                 </Typography>
                 <Input
                   size="lg"
+                  required
                   id="prdTitle"
+                  error={!!errors.title}
                   name="prdTitle"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Adidas Shoes"
-                  className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                  labelProps={{
-                    className: "before:content-none after:content-none",
-                  }}
+                  onChange={handleInputChange(setTitle, "title")}
+                  className={`!border-t-blue-gray-200 focus:!border-t-gray-900 ${
+                    errors.title ? "" : ""
+                  }`}
                 />
+                {errors.title && (
+                  <Typography variant="small" color="red" className="-mb-3 -mt-5">
+                    {errors.title}
+                  </Typography>
+                )}
                 <Typography variant="h6" color="blue-gray" className="-mb-3">
                   Description
                 </Typography>
@@ -101,13 +151,19 @@ const AddProductPage = ({ addProductSubmit }) => {
                   id="prdDescription"
                   name="prdDescription"
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  minRows={3}
+                  onChange={handleInputChange(setDescription, "description")}
                   placeholder="Input Your Description Here"
-                  className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                  labelProps={{
-                    className: "before:content-none after:content-none",
-                  }}
+                  error={!!errors.description}
+                  className={`!border-t-blue-gray-200 focus:!border-t-gray-900 ring-1 ring-transparent ${
+                    errors.description ? "!border-t-red-500" : ""
+                  }`}
                 />
+                {errors.description && (
+                  <Typography variant="small" color="red" className="-mb-3 -mt-5">
+                    {errors.description}
+                  </Typography>
+                )}
                 <Typography variant="h6" color="blue-gray" className="-mb-3">
                   Price
                 </Typography>
@@ -115,21 +171,30 @@ const AddProductPage = ({ addProductSubmit }) => {
                   id="prdPrice"
                   name="prdPrice"
                   value={price}
-                  onValueChange={(value) => setPrice(value)}
+                  onValueChange={handlePriceChange}
                   prefix="Rp "
                   placeholder="Enter the Price"
                   decimalsLimit={2}
-                  className="border-[1px] rounded-md border-blue-gray-200 p-2 text-gray-600 text-sm w-fit"
+                  className={`border-[1px] rounded-md border-blue-gray-200 p-2 text-gray-600 text-sm w-fit ${
+                    errors.price ? "border-red-500" : ""
+                  }`}
                 />
+                {errors.price && (
+                  <Typography variant="small" color="red" className="-mb-3 -mt-5">
+                    {errors.price}
+                  </Typography>
+                )}
                 <Typography variant="h6" color="blue-gray" className="-mb-3">
                   Category
                 </Typography>
                 <Autocomplete
                   placeholder="Select Category"
+                  error={!!errors.category}
                   value={value}
                   onChange={(event, newValue) => {
                     setValue(newValue);
                     setCategory(newValue);
+                    validateField("category", newValue);
                   }}
                   inputValue={inputValue}
                   onInputChange={(event, newInputValue) => {
@@ -137,9 +202,27 @@ const AddProductPage = ({ addProductSubmit }) => {
                   }}
                   options={categories}
                   sx={{ width: 300 }}
-                  renderInput={(params) => <Input {...params} size="lg" />}
+                  renderInput={(params) => (
+                    <Input
+                      {...params}
+                      size="lg"
+                      className={`${errors.category ? "border-red-500" : ""}`}
+                    />
+                  )}
                 />
-                <Button id="submitBtn" name="submitBtn" type="button" className="mt-6 w-fit mx-auto" onClick={handleClickOpen}>
+                {errors.category && (
+                  <Typography variant="small" color="red" className="-mb-3 -mt-5">
+                    {errors.category}
+                  </Typography>
+                )}
+
+                <Button
+                  id="submitBtn"
+                  name="submitBtn"
+                  type="button"
+                  className="mt-6 w-fit mx-auto"
+                  onClick={handleClickOpen}
+                >
                   Add Product
                 </Button>
               </div>
@@ -150,13 +233,23 @@ const AddProductPage = ({ addProductSubmit }) => {
       <Dialog open={open} onClose={() => handleClose(false)}>
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent>
-          <DialogContentText>Are you sure the data entered is correct?</DialogContentText>
+          <DialogContentText>
+            Are you sure the data entered is correct?
+          </DialogContentText>
         </DialogContent>
         <DialogActions className="flex items-center justify-center">
-          <Button onClick={() => handleClose(false)} color="white" className="ring-1 ring-black px-3 py-2">
+          <Button
+            onClick={() => handleClose(false)}
+            color="white"
+            className="ring-1 ring-black px-3 py-2"
+          >
             Cancel
           </Button>
-          <Button onClick={() => handleClose(true)} color="primary" className="px-3 py-2">
+          <Button
+            onClick={() => handleClose(true)}
+            color="black"
+            className="px-3 py-2"
+          >
             Confirm
           </Button>
         </DialogActions>

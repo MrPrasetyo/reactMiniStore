@@ -19,7 +19,7 @@ const CardBrand = () => {
     <>
       {card.map((product) => (
         <Card key={product.id} className="w-full sm:w-80 rounded-t-xl mx-auto h-[30em]">
-          <CardHeader floated={false} color="black" className="relative h-56 shrink-0">
+          <CardHeader floated={false} color="transparent" className="relative h-56 shrink-0">
             <img src={product.thumbnail} alt="Profile" className="rounded-t-xl w-full h-full object-cover mx-auto" />
             <div className="absolute inset-0 h-full w-full" />
             <Button size="sm" color="white" variant="text" className="!absolute top-4 right-4 rounded-full bg-red-500">
