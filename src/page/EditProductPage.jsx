@@ -1,6 +1,7 @@
 import React from 'react'
 
-const EditProduct = () => {
+const EditProduct = (editProductSubmit) => {
+  
   return (
     <div>EditProduct</div>
   )

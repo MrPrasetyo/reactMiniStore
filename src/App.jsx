@@ -12,11 +12,13 @@ import MainLayouts from "./Layouts/MainLayouts";
 import NotFoundPage from "./page/NotFoundPage";
 import axios from "axios";
 import { toast } from "react-toastify";
+import AdminLayout from "./Layouts/AdminLayout";
 
 const App = () => {
+  // Add Product
   const addProduct = async (newProduct) => {
     try {
-      const res = await axios.post('https://dummyjson.com/products/add', newProduct);
+      const res = await axios.post("https://dummyjson.com/products/add", newProduct);
       console.log("Product Added Successfully", res.data);
       toast.success("Product Added Successfully");
     } catch (error) {
@@ -25,19 +27,36 @@ const App = () => {
     }
   };
 
+  // Edit Product
+  const editProduct = async (produk) => {
+    try {
+      const res = await axios.put(`https://dummyjson.com/products/${produk.id}`, produk);
+      console.log("Job Updated Succesfully", res.data);
+      toast.success("Product Updated Succesfully");
+    } catch (error) {
+      console.error("Failed to Update the Product", error);
+      toast.error("Failed to Update the Product");
+    }
+  };
+
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path="/" element={<MainLayouts />}>
-        <Route index element={<HomePage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/category" element={<CategoryPage />} />
-        <Route path="/product/:id" element={<ProductPage />} />
-        <Route path="/category/:categoryName" element={<CategoryList />} />
-        <Route path="/store" element={<StorePage />} />
-        <Route path="/add-product" element={<AddProductPage addProductSubmit={addProduct} />} />
-        <Route path="/edit-product" element={<EditProductPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Route>
+      <>
+        <Route path="/" element={<MainLayouts />}>
+          <Route index element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/category" element={<CategoryPage />} />
+          <Route path="/product/:id" element={<ProductPage />} />
+          <Route path="/category/:categoryName" element={<CategoryList />} />
+          <Route path="/add-product" element={<AddProductPage addProductSubmit={addProduct} />} />
+          <Route path="/edit-product/:id" element={<EditProductPage editProductSubmit={editProduct} />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<StorePage />} />
+        </Route>
+      </>
     )
   );
 

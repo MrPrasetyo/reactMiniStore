@@ -17,7 +17,7 @@ const navListMenuItems = [
     title: "Store",
     description: "Going to Shop? click here",
     icon: ShoppingCartIcon,
-    link: "store",
+    link: "admin",
   },
   {
     title: "Add Product",

@@ -1,9 +1,27 @@
-import React from 'react'
+import React from "react";
+import SidebarStore, { SidebarItem } from "../components/SidebarStore";
+import { Outlet } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+import { FaStoreAlt } from "react-icons/fa";
 
 const AdminLayout = () => {
   return (
-    <div>AdminLayout</div>
-  )
-}
+    <>
+      <div className="flex">
+        <SidebarStore> 
+          <SidebarItem icon={<FaStoreAlt />} text="Store Management"/>
+          <SidebarItem icon={<FaStoreAlt />} text="Store Management"/>
+          <SidebarItem icon={<FaStoreAlt />} text="Store Management"/>
+          <SidebarItem icon={<FaStoreAlt />} text="Store Management"/>
+          <SidebarItem icon={<FaStoreAlt />} text="Store Management"/>
+        </SidebarStore>
+        <Outlet />
+      </div>
 
-export default AdminLayout
+      <ToastContainer />
+    </>
+  );
+};
+
+export default AdminLayout;
