@@ -9,7 +9,7 @@ import { FaRegStar, FaStar } from "react-icons/fa6";
 import { FaStarHalfAlt } from "react-icons/fa";
 
 const TABLE_HEAD = ["Photo", "Name Products", "Category", "Price", "Rating", "Actions"];
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 5;
 
 const getCategoryBackgroundColor = (category) => {
   switch (category) {
@@ -68,7 +68,7 @@ export function TableCompo() {
   const totalPages = Math.ceil(filteredStore.length / ITEMS_PER_PAGE);
 
   return (
-    <Card className="h-full w-full overflow-x-scroll">
+    <Card className="h-full w-full overflow-x-scroll scrollbar-none border-t-2">
       <div className="p-4 flex justify-between items-center w-1/4">
         <Input
           label="Search Products"

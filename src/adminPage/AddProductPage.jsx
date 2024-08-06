@@ -124,8 +124,8 @@ const AddProductPage = ({ addProductSubmit }) => {
   return (
     <>
       <div className="max-w-6xl mx-auto">
-        <div className="Form-Container max-w-xl mx-auto py-10">
-          <Card shadow={true} color="transparent" className="p-10">
+        <div className="Form-Container max-w-6xl mx-auto py-10">
+          <Card shadow={true} color="transparent" className="p-10 md:w-[60em]">
             <Typography variant="h4" color="blue-gray">
               Add New Products
             </Typography>

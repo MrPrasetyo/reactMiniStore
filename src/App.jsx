@@ -2,12 +2,12 @@ import React from "react";
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from "react-router-dom";
 import HomePage from "./page/HomePage";
 import AboutPage from "./page/AboutPage";
-import StorePage from "./page/StorePage";
+import StorePage from "./adminPage/StorePage";
 import CategoryPage from "./page/CategoryPage";
 import ProductPage from "./page/ProductPage";
 import CategoryList from "./page/CategoryList";
-import AddProductPage from "./page/AddProductPage";
-import EditProductPage from "./page/EditProductPage";
+import AddProductPage from "./adminPage/AddProductPage";
+import EditProductPage from "./adminPage/EditProductPage";
 import MainLayouts from "./Layouts/MainLayouts";
 import NotFoundPage from "./page/NotFoundPage";
 import axios from "axios";
@@ -48,13 +48,14 @@ const App = () => {
           <Route path="/category" element={<CategoryPage />} />
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/category/:categoryName" element={<CategoryList />} />
-          <Route path="/add-product" element={<AddProductPage addProductSubmit={addProduct} />} />
-          <Route path="/edit-product/:id" element={<EditProductPage editProductSubmit={editProduct} />} />
+
           <Route path="*" element={<NotFoundPage />} />
         </Route>
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<StorePage />} />
+          <Route path="/admin/add-product" element={<AddProductPage addProductSubmit={addProduct} />} />
+          <Route path="/admin/edit-product/:id" element={<EditProductPage editProductSubmit={editProduct} />} />
         </Route>
       </>
     )

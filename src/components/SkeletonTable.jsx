@@ -8,27 +8,30 @@ const SkeletonTable = () => {
     <SkeletonTheme baseColor="#cacaca" highlightColor="#525252">
       {[...Array(6)].map((_, index) => (
         <tr key={index}>
-          <td className="p-4">
+          <td className="p-2">
             <div className="flex items-center gap-3">
               <Skeleton circle={true} height={40} width={40} />
             </div>
           </td>
-          <td className="p-4">
+          <td className="p-2">
             <Typography variant="small" color="gray" className="font-normal">
-              <Skeleton width={260} />
+              <Skeleton width={200} />
             </Typography>
           </td>
-          <td className="p-4">
+          <td className="p-2">
             <Typography variant="small" color="gray" className="font-normal">
               <Skeleton width={80} />
             </Typography>
           </td>
-          <td className="p-4">
+          <td className="p-2">
             <Typography variant="small" color="gray" className="font-normal">
               <Skeleton width={50} />
             </Typography>
           </td>
-          <td className="p-4">
+          <td className="p-2">
+            <Skeleton width={30} />
+          </td>
+          <td className="p-2">
             <Skeleton width={30} />
           </td>
         </tr>

@@ -23,7 +23,7 @@ const navListMenuItems = [
     title: "Add Product",
     description: "Find Your Products here",
     icon: PhoneIcon,
-    link: "add-product",
+    link: "admin/add-product",
   },
   {
     title: "Products",
