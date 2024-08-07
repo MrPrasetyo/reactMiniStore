@@ -7,3 +7,33 @@ body {
 
 }
 
+@keyframes swipeIn {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes swipeOut {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+  
+  .swipe-in {
+    animation: swipeIn 0.3s forwards;
+  }
+  
+  .swipe-out {
+    animation: swipeOut 0.3s forwards;
+  }
+  
