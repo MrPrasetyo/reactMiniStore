@@ -1,7 +1,6 @@
 import React, { useContext, createContext, useState, memo, useMemo, useEffect } from "react";
 import { FaCaretUp } from "react-icons/fa";
 import { GoSidebarCollapse, GoSidebarExpand } from "react-icons/go";
-import reactSymbol from "../assets/reactSymbol.png";
 import { Link } from "react-router-dom";
 
 const SidebarContext = createContext();
@@ -12,7 +11,7 @@ const SidebarStore = ({ children }) => {
   const contextValue = useMemo(() => ({ expanded }), [expanded]);
 
   return (
-    <aside className="sticky top-0 h-screen z-20">
+    <aside className={`sticky top-0 h-screen z-20 ${expanded ? 'expanded' : ''}`}>
       <nav className="h-full flex flex-col bg-white border-r shadow-sm">
         <div className="px-4 py-2 flex justify-between items-center">
           <img
