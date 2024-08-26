@@ -8,7 +8,7 @@ import axios from "axios";
 import { FaRegStar, FaStar } from "react-icons/fa6";
 import { FaStarHalfAlt } from "react-icons/fa";
 
-const TABLE_HEAD = ["Photo", "Name Products", "Category", "Price", "Rating", "Actions"];
+const TABLE_HEAD = ["", "Photo", "Name Products", "Category", "Price", "Rating", "Actions"];
 const ITEMS_PER_PAGE = 5;
 
 const getCategoryBackgroundColor = (category) => {
@@ -98,6 +98,11 @@ export function TableCompo() {
               const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
               return (
                 <tr key={product.id}>
+                  <td className={`${classes} w-12`}>
+                    <div className="flex items-center">
+                      <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-600 focus:ring-blue-600" />
+                    </div>
+                  </td>
                   <td className={`${classes} w-24`}>
                     <div className="flex items-center gap-3">
                       <Avatar src={product.thumbnail} alt={product.title} size="md" className="border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1" />

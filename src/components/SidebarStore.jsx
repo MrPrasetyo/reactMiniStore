@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 const SidebarContext = createContext();
 
 const SidebarStore = ({ children }) => {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
 
   const contextValue = useMemo(() => ({ expanded }), [expanded]);
 
@@ -35,7 +35,7 @@ const SidebarStore = ({ children }) => {
 const ToggleSidebarButton = memo(({ expanded, setExpanded }) => {
   return (
     <button onClick={() => setExpanded((curr) => !curr)} className="p-2">
-      {expanded ? <GoSidebarCollapse size={25} /> : <GoSidebarExpand size={25} />}
+      {expanded ? <GoSidebarExpand size={25} /> : <GoSidebarCollapse size={25} />}
     </button>
   );
 });

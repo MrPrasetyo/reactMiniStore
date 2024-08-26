@@ -37,10 +37,8 @@ const ProductPage = () => {
         const productData = res.data;
         setProduct(productData);
 
-        const productImages = productData.images && productData.images.length > 0
-          ? productData.images
-          : fallbackData;
-        
+        const productImages = productData.images && productData.images.length > 0 ? productData.images : fallbackData;
+
         setImages(productImages);
         setActive(productImages[0]);
       } catch (error) {
@@ -84,20 +82,30 @@ const ProductPage = () => {
               <>
                 <div className="xl:max-w-2xl md:max-w-xl">
                   <div className="grid gap-4 md:p-0 p-5 w-[45dvw]">
-                    <div className="">
-                      {imageLoading && (
-                        <Skeleton variant="rectangular" className="lg:w-[670px] md:w-[580px] w-full h-[480px]" />
-                      )}
-                      <img
-                        className={`h-auto w-full max-w-lg rounded-lg object-cover object-center md:h-[480px] grow-0 shrink-0 ${imageLoading ? 'hidden' : 'block'}`}
-                        src={active}
-                        alt=""
-                        onLoad={() => setImageLoading(false)}
+                    {imageLoading && (
+                      <Skeleton
+                        variant="rectangular"
+                        className="rounded-lg"
+                        sx={{
+                          height: {
+                            xs: 300,
+                            sm: 400,
+                            md: 480,
+                          },
+                          width: {
+                            xs: 200,
+                            sm: 500,
+                            md: 600,
+                          },
+                        }}
                       />
+                    )}
+                    <div className="">
+                      <img className={`h-auto w-full max-w-lg rounded-lg object-cover object-center md:h-[480px] grow-0 shrink-0 ${imageLoading ? "hidden" : "block"}`} src={active} alt="" onLoad={() => setImageLoading(false)} />
                     </div>
                     <div className="grid grid-cols-5 gap-4">
                       {images.map((imgelink, index) => (
-                        <div key={index}>
+                        <div key={index} className="border-b-2 border-black flex items-center justify-center">
                           <img
                             onClick={() => {
                               setActive(imgelink);
@@ -122,8 +130,23 @@ const ProductPage = () => {
                     <span className="ml-2">{product.rating}</span>
                   </Typography>
                   <Typography className="flex items-center">
-                    <FaTruckFast />
+                    <FaTruckFast
+                      className={
+                        /Ships overnight/.test(product.shippingInformation)
+                          ? "text-green-500"
+                          : /Ships in \d+ business days/.test(product.shippingInformation)
+                          ? "text-green-500"
+                          : /Ships in \d+ week(s)?/.test(product.shippingInformation)
+                          ? "text-yellow-500"
+                          : /Ships in \d+ month(s)?/.test(product.shippingInformation)
+                          ? "text-red-500"
+                          : "text-black"
+                      }
+                    />
+
+                    <span className="ml-2">{product.shippingInformation}</span>
                   </Typography>
+
                   <Typography variant="p" className="mt-10 mb-3">
                     {product.description}
                   </Typography>

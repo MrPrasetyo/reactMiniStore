@@ -37,7 +37,7 @@ const CategoryList = () => {
         </Typography>
       </Link>
       {isLoading ? (
-        <div className="grid grid-cols-4"><SkeletonCategory /></div>
+        <div className="grid xl:grid-cols-4 md:grid-cols-2"><SkeletonCategory /></div>
         
       ) : (
         <>
